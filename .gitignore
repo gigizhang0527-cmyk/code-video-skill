@@ -1,0 +1,6 @@
+﻿node_modules/
+__pycache__/
+*.pyc
+03_画面/预览/
+04_成片/
+engine/timeline.data.js

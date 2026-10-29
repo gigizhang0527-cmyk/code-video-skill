@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>全片预览 · 14 段</title>
+<style>
+  @font-face{font-family:"SerifSC";src:url("./fonts/NotoSerifSC-VF.ttf") format("truetype");font-weight:200 900;font-display:block}
+  @font-face{font-family:"SansSC";src:url("./fonts/NotoSansSC-VF.ttf") format("truetype");font-weight:100 900;font-display:block}
+  @font-face{font-family:"B612";src:url("./fonts/B612-Regular.ttf") format("truetype");font-weight:400;font-display:block}
+  @font-face{font-family:"B612";src:url("./fonts/B612-Bold.ttf") format("truetype");font-weight:700;font-display:block}
+  html,body{margin:0;padding:0;background:#0A0A08;color:#F5EEDA;font-family:system-ui,sans-serif;overflow:hidden}
+  #wrap{display:flex;height:100vh;align-items:center;justify-content:center;gap:24px}
+  canvas{display:block;height:88vh;width:auto;box-shadow:0 0 0 1px rgba(217,169,74,.25),0 24px 80px rgba(0,0,0,.6)}
+  #panel{width:230px;font-size:12px}
+  h1{font-size:14px;letter-spacing:.08em;color:#D9A94A;margin:0 0 14px}
+  .row{margin:5px 0;color:rgba(245,238,220,.6);font-variant-numeric:tabular-nums}
+  button{background:#1a1710;color:#F5EEDA;border:1px solid rgba(217,169,74,.4);border-radius:6px;padding:7px 12px;font-size:12px;cursor:pointer;margin:8px 5px 0 0}
+  input[type=range]{width:100%;margin-top:12px;accent-color:#D9A94A}
+  #segs{margin-top:14px;max-height:46vh;overflow:auto;border-top:1px solid rgba(245,238,220,.12);padding-top:10px}
+  .seg{padding:4px 6px;border-radius:4px;cursor:pointer;color:rgba(245,238,220,.5);display:flex;justify-content:space-between}
+  .seg:hover{background:rgba(217,169,74,.12);color:#F5EEDA}
+  .seg.on{background:rgba(217,169,74,.22);color:#F5EEDA}
+</style></head>
+<body>
+<div id="wrap">
+  <canvas id="stage" width="1080" height="1920"></canvas>
+  <div id="panel">
+    <h1>全片画面 · 14 段</h1>
+    <div class="row">总长 <b id="dur">159.65</b> s</div>
+    <div class="row">当前 <b id="cur">0.00</b> s / 帧 <b id="fr">0</b></div>
+    <div class="row" id="segName">—</div>
+    <button id="play">播放 / 暂停</button>
+    <button id="restart">重播</button>
+    <input id="scrub" type="range" min="0" max="159.65" step="0.01" value="0">
+    <div id="segs"></div>
+  </div>
+</div>
+<script src="./lib.js"></script>
+<script src="./timeline.data.js" onerror="void 0"></script>
+<script src="./open_anim.js" onerror="void 0"></script>
+<script src="./beatrender.core.js"></script>
+<script>
+/* 数字人：skill 版不含数字人合成，恒就绪（film.js / render.mjs 会检查该函数） */
+window.PERSON_VIDEO = {};
+window.personReady = () => true;
+</script>
+<script src="./film.js"></script>
+<script>
+const CLEAN = location.search.includes('clean');
+window.NO_PERSON = location.search.includes('noperson');   // 数字人交给 FFmpeg 用 ProRes 4444 合成
+if (CLEAN) {
+  document.getElementById('wrap').style.cssText = 'display:block;height:auto;gap:0';
+  document.getElementById('panel').style.display = 'none';
+  const c = document.getElementById('stage');
+  c.style.cssText = 'display:block;width:1080px;height:1920px;box-shadow:none';
+  document.body.style.cssText = 'width:1080px;height:1920px;overflow:hidden;margin:0;background:#000';
+}
+const cv = document.getElementById('stage'), g = cv.getContext('2d');
+const DUR = window.FILM_DUR || 159.65;
+let t = 0, playing = !CLEAN, last = performance.now();
+
+function curSeg() { return (window.FILM_SEGS || []).find(s => t >= s.t0 && t < s.t1) || (window.FILM_SEGS || [])[0]; }
+function draw() {
+  window.drawFrame(g, Math.min(t, DUR));
+  document.getElementById('cur').textContent = t.toFixed(2);
+  document.getElementById('fr').textContent = Math.round(t * 24);
+  document.getElementById('scrub').value = Math.min(t, DUR);
+  const s = curSeg();
+  if (s) {
+    document.getElementById('segName').textContent = s.name + '（' + s.ab + '）';
+    document.querySelectorAll('.seg').forEach(el => el.classList.toggle('on', el.dataset.t0 == s.t0));
+  }
+  window.ready = true;
+}
+function loop(now) {
+  const dt = (now - last) / 1000; last = now;
+  if (playing) { t += dt; if (t > DUR) { t = 0; } }
+  draw(); requestAnimationFrame(loop);
+}
+window.seek = v => { t = Math.max(0, Math.min(DUR, v)); playing = false; draw(); };
+document.getElementById('play').onclick = () => { playing = !playing; };
+document.getElementById('restart').onclick = () => { t = 0; playing = true; };
+document.getElementById('scrub').oninput = e => { t = Number(e.target.value); playing = false; };
+
+(async () => {
+  await document.fonts.load('600 40px SerifSC', '用代码做视频');
+  await document.fonts.load('700 220px B612', '①②③④');
+  await document.fonts.load('600 30px SansSC', '数字人位');
+  await document.fonts.ready;
+  try {
+    const img = new Image(); img.src = '../数字人/数字人_正面_透明_无影.png';
+    await img.decode(); window.__PERSON = img;
+  } catch (e) { window.__PERSON = null; }
+  // 段落跳转
+  const box = document.getElementById('segs');
+  (window.FILM_SEGS || []).forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'seg'; el.dataset.t0 = s.t0;
+    el.innerHTML = `<span>${s.name}</span><span>${s.t0.toFixed(0)}s</span>`;
+    el.onclick = () => { t = s.t0 + 0.05; playing = false; draw(); };
+    box.appendChild(el);
+  });
+  requestAnimationFrame(loop);
+})();
+</script>
+</body></html>
