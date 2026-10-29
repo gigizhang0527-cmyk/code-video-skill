@@ -1,8 +1,8 @@
-/*
+﻿/*
  * gen_bgm2_mimo.mjs — 正文讲解版 BGM（Mimo V1 · 审片「除 S1 外也要 BGM，炫技与讲解要区分」）
  * 与 S1 的 BGM_自制_1265（126.5BPM 炫技版）同族不同气质：
  *   84 BPM 半速 · A 小调 · Am–F–C–G 慢和声 · 鼓组轻量化（无 clap、软 hat）· 长循环 28.6s
- * 用法： node gen_bgm2_mimo.mjs [输出.wav]   → 默认 02_音频/BGM_正文_84.wav
+ * 用法： node gen_bgm2_mimo.mjs [输出.wav]   → 默认 02_音频/bgm.wav
  */
 import { writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -134,6 +134,6 @@ for (let i = 0; i < N; i++) {
   buf.writeInt16LE(Math.max(-32768, Math.min(32767, Math.round(R[i] * g * 32767))), 46 + i * 4);
 }
 const HERE = dirname(fileURLToPath(import.meta.url));
-const out = resolve(process.argv[2] || join(HERE, '../../02_音频/BGM_正文_84.wav'));
+const out = resolve(process.argv[2] || join(HERE, '../02_音频/bgm.wav'));
 writeFileSync(out, buf);
 console.log(`${out}   ${(N / SR).toFixed(2)}s   ${BPM} BPM   ${totalBeats} 拍`);
