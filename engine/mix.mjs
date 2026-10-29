@@ -40,7 +40,7 @@ for (const f of [canvas, ...(vo ? [vo] : []), ...(bgm ? [bgm] : []), ...sfx.map(
 const inputs = ['-i', canvas];
 const audios = [];
 let idx = 1;
-if (vo) audios.push({ i: idx++, vol: 1, delay: 0 });
+if (vo) { inputs.push('-i', vo); audios.push({ i: idx++, vol: 1, delay: 0 }); }
 if (bgm) { inputs.push('-stream_loop', '-1', '-i', bgm); audios.push({ i: idx++, vol: bgmVol, delay: 0 }); }
 for (const s of sfx) { inputs.push('-i', s.path); audios.push({ i: idx++, vol: s.vol, delay: Math.max(0, s.at - t0) }); }
 

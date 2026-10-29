@@ -51,17 +51,32 @@ const run = (cmd, argv) => execFileSync(cmd, argv, { stdio: 'inherit', cwd: HERE
 const TL_JSON = resolve(PROJ, CFG.TIMELINE || '02_音频/timeline.json');
 if (!recompose && existsSync(TL_JSON)) run(process.execPath, [join(HERE, 'make_timeline.mjs')]);
 
-// 声点表：{ 段名: [[音效名, 相对段起点秒, 音量], ...] }
+// 声点表：键可以是段名（偏移相对段起点）或句子 id（偏移相对该句 t0）
 let smap = {};
 if (SFX_MAP && existsSync(SFX_MAP)) {
   smap = JSON.parse(readFileSync(SFX_MAP, 'utf8').replace(/^\uFEFF/, ''));
   for (const k of Object.keys(smap)) if (k.startsWith('_')) delete smap[k];
 }
-const planSfx = (name, t0) => (smap[name] || []).map(([sfx, off, vol]) => ({
-  file: join(SFXDIR, sfx + '.wav'),
-  at: t0 + Number(off),
-  vol: Number(vol),
-}));
+// 句子表（用于把句 id 键换算成绝对时间）
+const TL_JSON_2 = resolve(PROJ, CFG.TIMELINE || '02_音频/timeline.json');
+let SENTS = [];
+if (existsSync(TL_JSON_2)) {
+  const tl = JSON.parse(readFileSync(TL_JSON_2, 'utf8').replace(/^\uFEFF/, ''));
+  SENTS = (tl.segments || tl).map(s => ({ id: s.id, t0: Number(s.t0), t1: Number(s.t1) }));
+}
+const planSfx = (name, t0, t1) => {
+  const out = [];
+  for (const [sfx, off, vol] of (smap[name] || [])) {
+    out.push({ file: join(SFXDIR, sfx + '.wav'), at: t0 + Number(off), vol: Number(vol) });
+  }
+  for (const s of SENTS) {
+    if (s.t0 < t0 || s.t0 >= t1) continue;
+    for (const [sfx, off, vol] of (smap[s.id] || [])) {
+      out.push({ file: join(SFXDIR, sfx + '.wav'), at: s.t0 + Number(off), vol: Number(vol) });
+    }
+  }
+  return out;
+};
 
 const made = [];
 for (const [name, t0, t1] of PLAN) {
@@ -88,7 +103,7 @@ for (const [name, t0, t1] of PLAN) {
   }
 
   if (force || !existsSync(final)) {
-    const sfx = planSfx(name, t0);
+    const sfx = planSfx(name, t0, t1);
     console.log(`=== ${name} 合成（音效 ${sfx.length} 个） ===`);
     run(process.execPath, [join(HERE, 'mix.mjs'), '--canvas', canvas, '--t0', String(t0), '--vo', vo,
       ...(BGM ? ['--bgm', BGM.path, '--bgm-vol', String(BGM.vol)] : []),
