@@ -27,7 +27,7 @@ https://github.com/gigizhang0527-cmyk/code-video-skill
 ## 🛠️ 核心工作流
 
 1. **文案**：51 句级台本（每句一条画面预算）
-2. **TTS**：每句一个 wav，天然得到时间轴
+2. **配音**：每句一个 mono/16bit wav——**任意来源都行**（任何 TTS、声音克隆、真人录制；本 skill 不绑定、不内置任何音频模型或 API），天然得到时间轴
 3. **编排表**：`BEATS` 数组——每句话对应"谁出现 / 怎么出现 / 在哪个 box"，A-roll(纸) 与 B-roll(墨) 由 `bg` 自动区分
 4. **作画**：`beatrender.core.js` 用 Canvas 把每帧画出来
 5. **渲染**：无头 Chrome 逐帧截图 → ffmpeg 编码

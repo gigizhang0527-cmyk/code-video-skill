@@ -2,7 +2,7 @@
 /**
  * make_timeline.mjs — 把 voice/timeline.json 转成浏览器可直接加载的 timeline.data.js
  *
- * timeline.json 结构（由 TTS/Whisper 步骤产出）：
+ * timeline.json 结构（由你的台本对齐步骤产出——TTS 时间戳/Whisper/人工听打均可）：
  *   { "segments": [ { "id": "v001", "t0": 0.35, "t1": 2.10, "text": "…" }, … ], "total": 159.6 }
  * 生成： window.TL = [ { id, t0, t1 }, … ]   （只带时间轴，正文仍在 json 里，浏览器不需要）
  *

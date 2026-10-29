@@ -19,13 +19,24 @@ description: 用代码做视频（零图片/视频模型）——文案→句级
 
 ```
 ① 文案 → 51 句级台本
-② TTS 配音 → 02_音频/voice/*.wav（每句一个文件）
+② 配音 → 02_音频/voice/*.wav（每句一个文件）
 ③ 时间轴 → 02_音频/timeline.json（{segments:[{id,t0,t1,text}], total}）
 ④ 编排表 → engine/beatrender.core.js 的 BEATS 数组（每句一条：谁出现、怎么出现、在哪个 box）
 ⑤ 渲染 → node engine/build.mjs（无头 Chrome 逐帧画 → 片段 mp4）
 ⑥ 合成 → 自动混音（配音+BGM+音效）
 ⑦ 自检 → python engine/check_static.py 全片.mp4（无死长静止才算过）
 ```
+
+### 音频契约（来源完全不限）
+
+skill **不绑定任何 TTS / 音频模型，也不内置任何 API**——配音从哪来都行：
+任意 TTS API、声音克隆、真人人声录制、哼唱都可。唯一要求：
+
+| 项 | 要求 |
+|---|---|
+| 文件 | 每句一个 wav，命名 = 句子 id（`v001.wav` …），放 `02_音频/voice/` |
+| 格式 | **mono / 16bit**（采样率随意，引擎按第一个文件自动对齐） |
+| 时间轴 | `timeline.json` 的每句 `t0/t1` 要与配音时长对齐（若 TTS 不给时间戳，用 Whisper / 人工听打对齐后写入即可） |
 
 ## A-roll / B-roll 自动区分（默认主题）
 

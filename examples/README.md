@@ -30,7 +30,7 @@
 ```bash
 python scripts/scaffold.py ../demo-case --from-example
 cd ../demo-case
-# 需要把实例的 51 句配音放进来（本项目未附带音频；可先用任何 TTS 生成 vo_<id>.wav）
+# 需要把实例的 51 句配音放进来（本项目未附带音频；任何 TTS 或人声录制生成 vo_<id>.wav 均可）
 node engine/make_timeline.mjs
 node engine/build.mjs --only S1
 ```
