@@ -7,13 +7,13 @@ import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOTDIR = resolve(HERE, '..');
 const PROJ = resolve(HERE, '..');
-const CFG = await import(join(PROJ,'video.config.mjs')).catch(()=>({}));
+const CFG = await import(pathToFileURL(join(PROJ,'video.config.mjs')).href).catch(()=>({}));
 const OUTIMG = resolve(PROJ, CFG.PREVIEW || '03_画面/预览/全片');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.ttf': 'font/ttf', '.json': 'application/json' };
 const KEYS = [[31.5, "s3video"], [150.0, "s14video"]];

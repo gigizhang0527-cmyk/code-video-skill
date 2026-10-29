@@ -10,11 +10,11 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PROJ = resolve(HERE, '..');
-const CFG = await import(join(PROJ, 'video.config.mjs')).catch(() => ({}));
+const CFG = await import(pathToFileURL(join(PROJ, 'video.config.mjs')).href).catch(() => ({}));
 const TL_PATH = resolve(PROJ, process.argv[2] || CFG.TIMELINE || '02_音频/timeline.json');
 const OUT = join(HERE, 'timeline.data.js');
 

@@ -14,12 +14,12 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PROJ = resolve(HERE, '..');
 
-const CFG = await import(join(PROJ, 'video.config.mjs')).catch(() => {
+const CFG = await import(pathToFileURL(join(PROJ, 'video.config.mjs')).href).catch(() => {
   throw new Error('缺少 video.config.mjs（工程根目录），请从 templates/video.config.mjs 复制并修改');
 });
 
