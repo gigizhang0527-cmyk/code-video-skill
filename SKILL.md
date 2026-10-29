@@ -78,3 +78,10 @@ python engine/check_static.py 04_成片/全片_*.mp4   # 动态自检
 3. **残影按时间序取上一条**（timeline 邻接），不要用数组上一项。
 4. **改完 beatrender.core.js 必须 `node --check`**；语法错会让引擎静默退回旧画面。
 5. **交付前必须跑 check_static**：静止 > 0.5s 的窗口 = 不合格。
+
+## 无数字人时的 A-roll 注意
+
+本 skill 不含数字人合成。A-roll（讲人）句子如果画面只有"人物位 + 静态文字"，
+**必须自带空闲动效**（呼吸线 / 微光带 / 缓动点），否则 check_static 会报静窗。
+`examples/code-video-demo` 里 A-roll 的动感部分由数字人视频提供，**单独渲染画布时会有静窗——这是预期行为**；
+你的 A-roll 若要独立成片，请在 vis 里加持续的微动效（见 motion/ 配方 06）。
