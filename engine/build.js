@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * build.mjs — 全片构建管线（纯代码路线，**不含数字人**）
+ * build.js — 全片构建管线（纯代码路线，**不含数字人**）
  *
  * 用法：
- *   node build.mjs                       # 增量：缺什么补什么
- *   node build.mjs --force               # 全量重渲
- *   node build.mjs --only S2             # 只做某段
- *   node build.mjs --recompose           # 只重混音（画布缓存已存在）
- *   node build.mjs --tag v1              # 输出加后缀（S1_v1.mp4 / 全片_v1_13段.mp4）
+ *   node build.js                       # 增量：缺什么补什么
+ *   node build.js --force               # 全量重渲
+ *   node build.js --only S2             # 只做某段
+ *   node build.js --recompose           # 只重混音（画布缓存已存在）
+ *   node build.js --tag v1              # 输出加后缀（S1_v1.mp4 / 全片_v1_13段.mp4）
  *
- * 依赖工程根目录的 video.config.mjs（PLAN/路径/BGM 配置）。
+ * 依赖工程根目录的 video.config.js（PLAN/路径/BGM 配置）。
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
@@ -19,8 +19,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PROJ = resolve(HERE, '..');
 
-const CFG = await import(pathToFileURL(join(PROJ, 'video.config.mjs')).href).catch(() => {
-  throw new Error('缺少 video.config.mjs（工程根目录），请从 templates/video.config.mjs 复制并修改');
+const CFG = await import(pathToFileURL(join(PROJ, 'video.config.js')).href).catch(() => {
+  throw new Error('缺少 video.config.js（工程根目录），请从 templates/video.config.js 复制并修改');
 });
 
 const args = process.argv.slice(2);
@@ -49,7 +49,7 @@ const run = (cmd, argv) => execFileSync(cmd, argv, { stdio: 'inherit', cwd: HERE
 
 // 时间轴 → 浏览器版（timeline.data.js），有 timeline.json 才做
 const TL_JSON = resolve(PROJ, CFG.TIMELINE || '02_音频/timeline.json');
-if (!recompose && existsSync(TL_JSON)) run(process.execPath, [join(HERE, 'make_timeline.mjs')]);
+if (!recompose && existsSync(TL_JSON)) run(process.execPath, [join(HERE, 'make_timeline.js')]);
 
 // 声点表：键可以是段名（偏移相对段起点）或句子 id（偏移相对该句 t0）
 let smap = {};
@@ -95,7 +95,7 @@ for (const [name, t0, t1] of PLAN) {
   } else {
     if (force || !existsSync(canvas)) {
       console.log(`\n=== ${name} ${t0}–${t1} 渲画面 ===`);
-      run(process.execPath, [join(HERE, 'render.mjs'), '--clip', String(t0), String(t1), String(FPS)]);
+      run(process.execPath, [join(HERE, 'render.js'), '--clip', String(t0), String(t1), String(FPS)]);
     } else console.log(`[跳过渲染] ${name} 已有画布`);
     if (force || !existsSync(vo)) {
       run(PY, ['-X', 'utf8', join(HERE, 'build_vo.py'), '--from', String(t0), '--to', String(t1), '--out', vo]);
@@ -105,7 +105,7 @@ for (const [name, t0, t1] of PLAN) {
   if (force || !existsSync(final)) {
     const sfx = planSfx(name, t0, t1);
     console.log(`=== ${name} 合成（音效 ${sfx.length} 个） ===`);
-    run(process.execPath, [join(HERE, 'mix.mjs'), '--canvas', canvas, '--t0', String(t0), '--vo', vo,
+    run(process.execPath, [join(HERE, 'mix.js'), '--canvas', canvas, '--t0', String(t0), '--vo', vo,
       ...(BGM ? ['--bgm', BGM.path, '--bgm-vol', String(BGM.vol)] : []),
       ...sfx.flatMap(p => ['--sfx', `${p.file}@${p.at}@${p.vol}`]),
       '--out', final]);

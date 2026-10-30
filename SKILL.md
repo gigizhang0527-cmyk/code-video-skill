@@ -22,7 +22,7 @@ description: 用代码做视频（零图片/视频模型）——文案→句级
 ② 配音 → 02_音频/voice/*.wav（每句一个文件）
 ③ 时间轴 → 02_音频/timeline.json（{segments:[{id,t0,t1,text}], total}）
 ④ 编排表 → engine/beatrender.core.js 的 BEATS 数组（每句一条：谁出现、怎么出现、在哪个 box）
-⑤ 渲染 → node engine/build.mjs（无头 Chrome 逐帧画 → 片段 mp4）
+⑤ 渲染 → node engine/build.js（无头 Chrome 逐帧画 → 片段 mp4）
 ⑥ 合成 → 自动混音（配音+BGM+音效）
 ⑦ 自检 → python engine/check_static.py 全片.mp4（无死长静止才算过）
 ```
@@ -53,7 +53,7 @@ BEATS 每条 beats 用 `bg: 'paper' | 'ink'` 声明画面归属，引擎自动�
 
 ```
 <项目>/
-├── video.config.mjs        # 段表 PLAN / 路径 / BGM 配置
+├── video.config.js        # 段表 PLAN / 路径 / BGM 配置
 ├── 02_音频/
 │   ├── timeline.json       # 句级时间轴
 │   ├── voice/              # vo_<id>.wav（每句一个）
@@ -64,15 +64,15 @@ BEATS 每条 beats 用 `bg: 'paper' | 'ink'` 声明画面归属，引擎自动�
     ├── beatrender.core.js  # 动效引擎 + BEATS 编排表（主要编辑对象）
     ├── film.js             # 全片段表 SEGS + 底纹/导航/版式
     ├── film.html           # 无头渲染页面
-    └── *.mjs / *.py        # 构建、渲染、混音、自检
+    └── *.js / *.py        # 构建、渲染、混音、自检
 ```
 
 ## 常用命令
 
 ```bash
-node engine/build.mjs                    # 增量构建全片
-node engine/build.mjs --only S2 --force  # 只重做某段
-node engine/build.mjs --recompose        # 音频改动后只重混（不重渲画布）
+node engine/build.js                    # 增量构建全片
+node engine/build.js --only S2 --force  # 只重做某段
+node engine/build.js --recompose        # 音频改动后只重混（不重渲画布）
 python engine/check_static.py 04_成片/全片_*.mp4   # 动态自检
 ```
 

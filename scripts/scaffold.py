@@ -34,7 +34,7 @@ def main():
         (dst / d).mkdir(parents=True, exist_ok=True)
 
     # 配置 + 声点表范式
-    shutil.copy(ROOT / 'templates' / 'video.config.mjs', dst / 'video.config.mjs')
+    shutil.copy(ROOT / 'templates' / 'video.config.js', dst / 'video.config.js')
     shutil.copy(ROOT / 'templates' / 'sfx_map范式.json', dst / 'sfx_map.json')
 
     if a.from_example:
@@ -49,7 +49,7 @@ def main():
     print('   1. 把配音 wav 放进 02_音频/voice/（vo_<段名>.wav）')
     print('   2. 写 02_音频/timeline.json（句级时间轴）')
     print('   3. 编辑 engine/beatrender.core.js 的 BEATS（或先试跑实例）')
-    print('   4. node engine/build.mjs')
+    print('   4. node engine/build.js')
 
 
 if __name__ == '__main__':

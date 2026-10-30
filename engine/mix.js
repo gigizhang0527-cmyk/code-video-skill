@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * mix.mjs — 画布片段 + 配音 + BGM + 音效 → 可交付 mp4（**不含数字人合成**）
+ * mix.js — 画布片段 + 配音 + BGM + 音效 → 可交付 mp4（**不含数字人合成**）
  *
  * 用法：
- *   node mix.mjs --canvas 片段.mp4 --t0 0 --vo vo.wav --out out.mp4 \
+ *   node mix.js --canvas 片段.mp4 --t0 0 --vo vo.wav --out out.mp4 \
  *        [--bgm bgm.wav --bgm-vol 0.16] [--sfx sfx/pop.wav@12.336@0.4 ...]
  *
  * 说明：

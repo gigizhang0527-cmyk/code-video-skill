@@ -102,7 +102,7 @@ for (let i = 0; i < N; i++) {
 ## 第五幕 · 自检：过三道门禁才算交付
 
 ```bash
-node engine/build.mjs                        # 构建全片
+node engine/build.js                        # 构建全片
 python engine/check_static.py 04_成片/全片_*.mp4   # 死长静止 >0.5s = 不合格
 ```
 

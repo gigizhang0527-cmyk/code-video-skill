@@ -55,7 +55,7 @@ python scripts/scaffold.py ~/我的视频
 cd ~/我的视频
 # 3. 放入 timeline.json + voice/*.wav（或先用任何方式生成）
 # 4. 编辑 engine/beatrender.core.js 的 BEATS（或先用实例）
-node engine/build.mjs
+node engine/build.js
 python engine/check_static.py 04_成片/全片_*.mp4
 ```
 

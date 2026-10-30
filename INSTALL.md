@@ -35,16 +35,16 @@ python scripts/scaffold.py ~/我的视频 # 建一个新视频工程（含 engin
 python scripts/scaffold.py D:\projects\my-video
 ```
 
-会把 `engine/`、`templates/video.config.mjs` 复制进目标目录并建好
+会把 `engine/`、`templates/video.config.js` 复制进目标目录并建好
 `02_音频/ 03_画面/预览/ 04_成片/` 等空目录。
 
 ## 首次运行检查
 
 ```bash
 cd <工程>
-node engine/make_timeline.mjs      # 需要 02_音频/timeline.json
+node engine/make_timeline.js      # 需要 02_音频/timeline.json
 node --check engine/beatrender.core.js
-node engine/build.mjs --only S1    # 先渲一段
+node engine/build.js --only S1    # 先渲一段
 ```
 
 产物：`03_画面/预览/片段_*.mp4`（画布）→ `04_成片/S1.mp4`（含音频）。

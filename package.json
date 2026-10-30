@@ -1,0 +1,8 @@
+{
+  "name": "code-video-skill",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "用代码做视频 — 纯代码 Canvas 视频流水线（零图片/视频模型）",
+  "license": "MIT"
+}

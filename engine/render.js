@@ -1,4 +1,4 @@
-﻿/*
+/*
  * render_film_v4.mjs — 按段落截关键帧
  *   node render_film_v4.mjs --keys
  */
@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOTDIR = resolve(HERE, '..');
 const PROJ = resolve(HERE, '..');
-const CFG = await import(pathToFileURL(join(PROJ,'video.config.mjs')).href).catch(()=>({}));
+const CFG = await import(pathToFileURL(join(PROJ,'video.config.js')).href).catch(()=>({}));
 const OUTIMG = resolve(PROJ, CFG.PREVIEW || '03_画面/预览/全片');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.ttf': 'font/ttf', '.json': 'application/json' };
 const KEYS = [[31.5, "s3video"], [150.0, "s14video"]];
